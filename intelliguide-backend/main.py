@@ -20,12 +20,10 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 app = FastAPI(
     title="IntelliGuide Backend",
     description="DevOps kurulum rehberleri ve asistanı için AI destekli backend.",
-    version="2.0.0"
+    version="3.0.0" # Versiyonu güncelledik
 )
 
 # --- NİHAİ CORS AYARLARI ---
-# Bu ayar, tüm kaynaklardan gelen tüm isteklere izin verir.
-# Bu, iletişim sorununu kesin olarak çözmelidir.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,7 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Pydantic Modelleri (Veri Doğrulama için) ---
+# --- Pydantic Modelleri ---
 class Tool(BaseModel):
     id: str
     name: str
@@ -51,7 +49,7 @@ class AssistantRequest(BaseModel):
     question: str
     current_step: Optional[str] = None
 
-# --- Prompt Fabrikası (Prompt'ları oluşturmak için) ---
+# --- Prompt Fabrikası ---
 class PromptFactory:
     @staticmethod
     def generate_guide(tool: Tool, params: Dict[str, Any], os: str) -> str:
@@ -69,17 +67,7 @@ class PromptFactory:
         CONTEXT: The user wants to install **{tool.name}**. The user's target operating system is **{os}**. All commands must be compatible.
         User-provided parameters:
         {param_string}
-
-        INSTRUCTIONS:
-        1. Create a comprehensive, step-by-step installation guide.
-        2. Start with a brief introduction.
-        3. If the tool is complex (like Kubernetes), provide a simple Mermaid.js diagram illustrating the setup.
-        4. Divide the guide into logical, emoji-prefixed steps (e.g., "## 📦 Adım 1: Ön Gereksinimler").
-        5. For each step, provide a clear explanation of *what* is being done and *why*.
-        6. Provide **all** necessary commands and configuration file contents inside separate, copyable, fenced code blocks with language identifiers.
-        7. Incorporate the user's parameters directly into the commands and configurations.
-        8. Conclude with a "## 🚀 Kurulum Tamamlandı!" section.
-        9. DO NOT ask any questions. Generate the complete guide.
+        INSTRUCTIONS: Create a comprehensive, step-by-step installation guide.
         """
 
     @staticmethod
@@ -96,11 +84,7 @@ class PromptFactory:
         ---
         {history_string}
         ---
-        INSTRUCTIONS:
-        1. Provide a direct, helpful, and concise answer based on the user's current step and question.
-        2. If the user provides an error message, analyze it and suggest a solution.
-        3. If a command needs to be corrected, provide the full, corrected command in a code block.
-        4. Maintain a supportive tone.
+        INSTRUCTIONS: Provide a direct, helpful, and concise answer based on the user's current step and question.
         """
 
 # --- API Endpoint'leri ---
@@ -126,4 +110,5 @@ async def ask_assistant(request: AssistantRequest):
 
 @app.get("/")
 def read_root():
-    return {"message": "IntelliGuide Backend is running."}
+    # --- GÖZLE GÖRÜLÜR DEĞİŞİKLİK BURADA ---
+    return {"message": "IntelliGuide Backend v3 - CORS FIX DEPLOYED"}
