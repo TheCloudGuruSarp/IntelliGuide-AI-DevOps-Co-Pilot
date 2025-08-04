@@ -18,7 +18,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 app = FastAPI(
     title="IntelliGuide Backend",
     description="DevOps kurulum rehberleri ve asistanı için AI destekli backend.",
-    version="6.0.0" 
+    version="7.0.0" 
 )
 
 app.add_middleware(
@@ -65,12 +65,13 @@ class PromptFactory:
         return f"""
         TASK: Generate a step-by-step DevOps installation guide with structured, parseable blocks.
         ROLE: You are IntelliGuide, a world-class DevOps expert AI. Your output must be clean, professional, and easy to parse.
-        FORMAT: Strict Markdown with custom tags.
+        FORMAT: Strict Markdown with custom tags. DO NOT deviate from this format.
         LANGUAGE: Turkish.
 
-        CUSTOM TAGS:
-        1.  `[ON: server_name]`: Use this tag immediately before a code block to specify which server the command should run on. `server_name` should be descriptive (e.g., `master-1`, `worker-all`, `local-machine`).
+        CUSTOM TAGS (CRITICAL):
+        1.  `[ON: server_name]`: ALWAYS use this tag on a new line immediately before a code block. `server_name` must be descriptive (e.g., `Tüm Master Node'lar`, `worker-1`, `Yerel Makineniz`).
         2.  `[INFO]...[/INFO]`: Use this block for critical information, warnings, or notes that the user must read. Explain what to do with values from previous commands (like tokens or hashes).
+        3.  ALL commands or configuration files MUST be inside a `[ON:...]` block followed by a fenced code block (```bash, ```yaml, etc.). There should be NO untagged code blocks.
 
         CONTEXT:
         - Tool to install: **{tool.name}**
@@ -80,16 +81,13 @@ class PromptFactory:
 
         INSTRUCTIONS:
         1.  Create a comprehensive, step-by-step installation guide.
-        2.  Start with a brief introduction.
+        2.  Start with a brief introduction (plain text).
         3.  If the tool is complex (like Kubernetes), provide a simple Mermaid.js diagram inside a ```mermaid block.
-        4.  Divide the guide into logical, emoji-prefixed steps (e.g., "## 📦 Adım 1: Ön Gereksinimler").
-        5.  For each command or configuration file:
-            a.  First, write the `[ON: server_name]` tag on its own line.
-            b.  Immediately after, provide the command/config inside a fenced code block (```bash, ```yaml, etc.).
-        6.  For important notes or warnings (like "Bu komuttaki <token> değerini bir önceki adımdaki çıktıdan almalısınız."), wrap the text in `[INFO]...[/INFO]` tags.
-        7.  Provide clear explanations for each step.
+        4.  Divide the guide into logical, emoji-prefixed steps using Markdown Headings (e.g., "## 📦 Adım 1: Ön Gereksinimler").
+        5.  Under each heading, provide clear explanations (plain text).
+        6.  When it's time for a command, first write the `[ON: server_name]` tag, then on the next line, the fenced code block.
+        7.  Use `[INFO]` tags where necessary for important notes.
         8.  Conclude with a "## 🚀 Kurulum Tamamlandı!" section.
-        9.  DO NOT use regular markdown for code. ALL commands/configs MUST be inside a tagged `[ON: ...]` block followed by a fenced code block.
         """
 
     @staticmethod
@@ -133,4 +131,4 @@ async def ask_assistant(request: AssistantRequest):
 
 @app.get("/")
 def read_root():
-    return {"message": "IntelliGuide Backend v6 - Professional Guide Output"}
+    return {"message": "IntelliGuide Backend v7 - Professional Guide Output"}
