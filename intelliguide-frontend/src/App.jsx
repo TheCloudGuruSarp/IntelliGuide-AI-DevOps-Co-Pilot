@@ -7,12 +7,11 @@ const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const CopyIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> );
 const LoadingSpinner = () => ( <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> );
 const TargetIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> );
-const InfoIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> );
+const InfoIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 flex-shrink-0 text-blue-400 mr-3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> );
 
-// --- DATA ---
+// --- DATA (Veri ve konfigürasyonlar) ---
 const toolCategories = [ { name: "Container & Orkestrasyon", tools: [ { id: 'docker', name: 'Docker', description: 'Uygulamaları konteynerler ile geliştirin, dağıtın ve çalıştırın.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', params: [] }, { id: 'kubernetes', name: 'Kubernetes', description: 'Konteynerize uygulamaların dağıtımı ve yönetimini otomatikleştirin.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg', params: [ { id: 'version', label: 'Kubernetes Versiyonu', type: 'select', options: ['1.28.3', '1.27.7', '1.26.10'], defaultValue: '1.28.3' }, { id: 'master_count', label: 'Master Node Sayısı', type: 'number', min: 1, max: 5, defaultValue: 1 }, { id: 'worker_count', label: 'Worker Node Sayısı', type: 'number', min: 0, max: 10, defaultValue: 1 }, ]}, { id: 'rancher-rke2', name: 'Rancher / RKE2', description: 'Kurumsal Kubernetes yönetimi için komple bir platform.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rancher/rancher-original.svg', params: [ { id: 'master_count', label: 'Master Node Sayısı', type: 'number', min: 1, max: 5, defaultValue: 1 }, { id: 'worker_count', label: 'Worker Node Sayısı', type: 'number', min: 0, max: 10, defaultValue: 1 }, ]}, { id: 'helm', name: 'Helm', description: 'Kubernetes için paket yöneticisi.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/helm/helm-original.svg', params: [] }, ] }, { name: "CI/CD", tools: [ { id: 'jenkins', name: 'Jenkins', description: 'Popüler, açık kaynaklı otomasyon sunucusu.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg', params: [ { id: 'domain_name', label: 'Jenkins Erişimi İçin Domain Adı', type: 'text', placeholder: 'jenkins.example.com' }, { id: 'admin_user', label: 'Admin Kullanıcı Adı (Opsiyonel)', type: 'text', placeholder: 'admin' } ]}, { id: 'gitlab-ci', name: 'GitLab CI/CD', description: 'GitLab ile entegre, güçlü CI/CD çözümü.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg', params: [{id: 'gitlab_runner_tags', label: 'Runner Etiketleri (virgülle ayırın)', type: 'text', placeholder: 'docker,prod'}] }, { id: 'github-actions', name: 'GitHub Actions', description: 'GitHub reponuzdan yazılım iş akışlarını otomatikleştirin.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/githubactions/githubactions-original.svg', params: [{id: 'runner_scope', label: 'Self-Hosted Runner Kapsamı (repo/org)', type: 'text', placeholder: 'my-org/my-repo'}] }, { id: 'argocd', name: 'Argo CD', description: 'Kubernetes için bildirimsel, GitOps sürekli dağıtım aracı.', logo: 'https://raw.githubusercontent.com/cncf/artwork/master/projects/argo/icon/color/argo-icon-color.svg', params: [ { id: 'kube_namespace', label: 'Kurulacak Kubernetes Namespace', type: 'text', placeholder: 'argocd', defaultValue: 'argocd' }, { id: 'install_cli', label: 'Argo CD CLI kurulsun mu?', type: 'select', options: ['Evet', 'Hayır'], defaultValue: 'Evet' } ]}, ] }, { name: "Altyapı Kodu (IaC)", tools: [ { id: 'terraform', name: 'Terraform', description: 'Altyapıyı güvenli ve verimli bir şekilde oluşturun, değiştirin.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg', params: [{id: 'provider', label: 'Bulut Sağlayıcı', type: 'select', options: ['AWS', 'Azure', 'Google Cloud'], defaultValue: 'AWS'}] }, { id: 'ansible', name: 'Ansible', description: 'Uygulama dağıtımı ve konfigürasyon yönetimi için otomasyon.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg', params: [{id: 'inventory_hosts', label: 'Hedef Hostlar (virgülle ayırın)', type: 'text', placeholder: 'server1.example.com, server2.example.com'}] }, { id: 'pulumi', name: 'Pulumi', description: 'Favori dilinizi kullanarak altyapı oluşturun ve dağıtın.', logo: 'https://www.pulumi.com/images/logo/logo.svg', params: [{id: 'language', label: 'Programlama Dili', type: 'select', options: ['TypeScript', 'Python', 'Go'], defaultValue: 'TypeScript'}] }, ] }, { name: "İzleme & Loglama", tools: [ { id: 'prometheus-grafana', name: 'Prometheus & Grafana', description: 'Güçlü izleme ve görselleştirme ikilisi.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prometheus/prometheus-original.svg', params: [ { id: 'grafana_domain', label: 'Grafana Erişimi İçin Domain Adı', type: 'text', placeholder: 'grafana.example.com' }, { id: 'exporters', label: 'Kurulacak Exporterlar', type: 'checkbox', options: ['Node Exporter', 'cAdvisor', 'Blackbox Exporter'] } ]}, { id: 'elasticsearch', name: 'Elasticsearch', description: 'Dağıtık, RESTful arama ve analiz motoru.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/elasticsearch/elasticsearch-original.svg', params: [ { id: 'cluster_name', label: 'Cluster Adı', type: 'text', placeholder: 'my-es-cluster', defaultValue: 'my-es-cluster' } ]}, { id: 'loki', name: 'Loki', description: 'Prometheus\'tan ilham alan, log toplama sistemi.', logo: 'https://www.svgrepo.com/show/373773/loki.svg', params: [ { id: 'storage_backend', label: 'Depolama Arka Ucu', type: 'select', options: ['filesystem', 'S3', 'GCS'], defaultValue: 'filesystem' } ]}, { id: 'jaeger', name: 'Jaeger', description: 'Dağıtık sistemler için uçtan uca dağıtık izleme.', logo: 'https://raw.githubusercontent.com/cncf/artwork/master/projects/jaeger/icon/color/jaeger-icon-color.svg', params: [ { id: 'storage_backend', label: 'Depolama Arka Ucu', type: 'select', options: ['in-memory', 'elasticsearch', 'cassandra'], defaultValue: 'in-memory' } ]}, ] }, { name: "Güvenlik", tools: [ { id: 'vault', name: 'HashiCorp Vault', description: 'Sırları ve hassas verileri güvenli bir şekilde yönetin.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vagrant/vagrant-original.svg', params: [{id: 'listener_protocol', label: 'Listener Protokolü', type: 'select', options: ['http', 'https'], defaultValue: 'http'}] }, { id: 'trivy', name: 'Trivy', description: 'Konteyner imajları ve diğer artifact\'ler için güvenlik açığı tarayıcısı.', logo: 'https://www.aquasec.com/wp-content/uploads/2021/10/trivy-icon-color.svg', params: [] } ] }, { name: "Service Mesh", tools: [ { id: 'istio', name: 'Istio', description: 'Mikroservisleri bağlamak, güvenli hale getirmek ve izlemek için açık platform.', logo: 'https://www.svgrepo.com/show/373686/istio.svg', params: [{id: 'profile', label: 'Kurulum Profili', type: 'select', options: ['default', 'demo', 'minimal'], defaultValue: 'default'}] }, { id: 'linkerd', name: 'Linkerd', description: 'Ultra hafif, inanılmaz derecede hızlı service mesh.', logo: 'https://raw.githubusercontent.com/cncf/artwork/master/projects/linkerd/icon/color/linkerd-icon-color.svg', params: [] } ] }, { name: "Veritabanı", tools: [ { id: 'postgresql', name: 'PostgreSQL', description: 'Güçlü, açık kaynaklı nesne-ilişkisel veritabanı sistemi.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', params: [{id: 'db_name', label: 'Veritabanı Adı', type: 'text', placeholder: 'mydatabase'}] }, { id: 'mongodb', name: 'MongoDB', description: 'Modern uygulamalar için ölçeklenebilir, esnek NoSQL veritabanı.', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg', params: [{id: 'db_name', label: 'Veritabanı Adı', type: 'text', placeholder: 'mydocumentdb'}] } ] } ];
 const linuxDistros = [ 'Ubuntu 22.04 LTS', 'Ubuntu 20.04 LTS', 'Debian 11', 'Debian 10', 'CentOS Stream 9', 'CentOS Stream 8', 'Rocky Linux 9', 'AlmaLinux 9', 'Fedora 38', 'Fedora 37', 'Alpine Linux (Latest)' ];
-
 const API_URL = 'https://intelliguide-ai-devops-co-pilot.onrender.com';
 
 function App() {
@@ -25,7 +24,6 @@ function App() {
     const [userInput, setUserInput] = useState('');
     const [isLoadingGuide, setIsLoadingGuide] = useState(false);
     const [isLoadingChat, setIsLoadingChat] = useState(false);
-    
     const chatContainerRef = useRef(null);
     const abortControllerRef = useRef(null);
 
@@ -69,7 +67,6 @@ function App() {
                 body: JSON.stringify({ tool: toolToUse, params: paramsToUse, os: osToUse }),
                 signal: abortControllerRef.current.signal
             });
-
             if (!response.ok) { throw new Error(`Sunucu hatası: ${response.status}`); }
             const data = await response.json();
             setGuide(data.guide);
@@ -89,14 +86,12 @@ function App() {
         setChatHistory(newHistory);
         setUserInput('');
         setIsLoadingChat(true);
-
         try {
             const response = await fetch(`${API_URL}/api/v2/ask-assistant`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tool: selectedTool, chat_history: newHistory, question: userInput, current_step: currentStep })
             });
-
             if (!response.ok) { throw new Error(`Sunucu hatası: ${response.status}`); }
             const data = await response.json();
             setChatHistory(prev => [...prev, { sender: 'bot', text: data.answer }]);
@@ -134,26 +129,21 @@ const GuideDisplay = ({ guide, isLoading, onBack, toolName, onSetStep, currentSt
     const [parsedContent, setParsedContent] = useState([]);
     useEffect(() => {
         const content = [];
-        const parts = guide.split(/(```[\s\S]*?```|## [\s\S]*?(?=\n## |$))/g).filter(s => s && s.trim() !== '');
+        const parts = guide.split(/(\[ON:[^\]]+\]\n*```[\s\S]*?```|\[INFO\][\s\S]*?\[\/INFO\]|## [\s\S]*?(?=\n## |$)|```[\s\S]*?```)/g).filter(s => s && s.trim() !== '');
         
         parts.forEach(part => {
             const mermaidMatch = part.match(/^```mermaid\n([\s\S]*?)```$/);
-            const codeMatch = part.match(/^```(\w*)\n([\s\S]*?)```$/);
-            const headingMatch = part.match(/^## (.*)/);
+            const serverMatch = part.match(/^\[ON:\s*([^\]]+)\]\n*```(\w*)\n([\s\S]*?)```$/);
             const infoMatch = part.match(/^\[INFO\]([\s\S]*?)\[\/INFO\]$/);
-            const serverMatch = part.match(/^\[ON:\s*([^\]]+)\]/);
+            const headingMatch = part.match(/^## (.*)/);
+            const genericCodeMatch = part.match(/^```(\w*)\n([\s\S]*?)```$/);
 
             if (mermaidMatch) { content.push({ type: 'mermaid', content: mermaidMatch[1] }); }
-            else if (serverMatch) {
-                const codeContent = part.substring(serverMatch[0].length).trim();
-                const codeBlockMatch = codeContent.match(/^```(\w*)\n([\s\S]*?)```$/);
-                if (codeBlockMatch) {
-                    content.push({ type: 'code', server: serverMatch[1], lang: codeBlockMatch[1] || 'bash', content: codeBlockMatch[2] });
-                }
-            }
+            else if (serverMatch) { content.push({ type: 'code', server: serverMatch[1], lang: serverMatch[2] || 'bash', content: serverMatch[3] }); }
             else if (infoMatch) { content.push({ type: 'info', content: infoMatch[1].trim() }); }
             else if (headingMatch) { content.push({ type: 'step', content: part }); }
-            else if (!codeMatch) { content.push({ type: 'text', content: part }); }
+            else if (genericCodeMatch) { content.push({ type: 'code', server: 'Genel', lang: genericCodeMatch[1] || 'bash', content: genericCodeMatch[2] }); }
+            else { content.push({ type: 'text', content: part }); }
         });
         setParsedContent(content);
     }, [guide]);
@@ -163,7 +153,7 @@ const GuideDisplay = ({ guide, isLoading, onBack, toolName, onSetStep, currentSt
     return ( <div className="w-full md:w-3/5 lg:w-2/3 bg-gray-800 p-6 rounded-lg border border-gray-700 h-[80vh] flex flex-col animate-fade-in"> <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-700 flex-shrink-0"> <button onClick={onBack} className="text-gray-400 hover:text-white transition-colors flex items-center"> &larr; <span className="ml-2">Araç Seçimine Dön</span> </button> <h2 className="text-xl font-bold text-center">{toolName} Kurulum Rehberi</h2> </div> <div className="overflow-y-auto flex-grow pr-2"> {isLoading ? ( <div className="flex flex-col items-center justify-center h-full"> <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div> <p className="mt-4 text-gray-400">AI Asistanınız rehberi hazırlıyor...</p> </div> ) : ( parsedContent.map((item, index) => {
         if (item.type === 'mermaid') return <MermaidDiagram key={index} chart={item.content} />;
         if (item.type === 'code') return ( <div key={index} className="bg-gray-900/50 rounded-md my-4 relative border border-gray-700"> <div className="flex justify-between items-center px-4 py-2 bg-gray-800/50 rounded-t-md"> <div className="text-xs font-semibold text-gray-300"><span className="text-blue-400 mr-2">Çalıştırılacak Sunucu:</span>{item.server}</div> <button onClick={() => handleCopy(item.content)} className="flex items-center text-xs text-gray-300 hover:text-white transition-colors"> <CopyIcon /> <span className="ml-2">Kopyala</span> </button> </div> <pre className="p-4 text-sm overflow-x-auto text-left"><code>{item.content}</code></pre> </div> );
-        if (item.type === 'info') return ( <div key={index} className="flex items-start p-3 my-4 bg-blue-900/30 border-l-4 border-blue-500 rounded-r-lg"> <InfoIcon className="flex-shrink-0 h-5 w-5 text-blue-400 mr-3" /> <p className="text-blue-200 text-sm" dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, '<br />') }}></p> </div> );
+        if (item.type === 'info') return ( <div key={index} className="flex items-start p-3 my-4 bg-blue-900/30 border-l-4 border-blue-500 rounded-r-lg"> <InfoIcon /> <p className="text-blue-200 text-sm" dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, '<br />') }}></p> </div> );
         if (item.type === 'step') { const headingText = item.content.match(/^## (.*)/)[1]; const isActive = currentStep === headingText; return ( <div key={index} className="prose prose-invert max-w-none"> <h2 id={`step-${index}`}> <span>{headingText}</span> <button onClick={() => onSetStep(isActive ? null : headingText)} className={`p-2 rounded-full transition-colors ${isActive ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`} title="Bu adımı hedefle"> <TargetIcon /> </button> </h2> <div dangerouslySetInnerHTML={{ __html: item.content.replace(/^## .*\n/, '').replace(/\n/g, '<br />') }} /> </div> ); }
         return <div key={index} className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, '<br />') }} />;
     }) )} </div> </div> );
