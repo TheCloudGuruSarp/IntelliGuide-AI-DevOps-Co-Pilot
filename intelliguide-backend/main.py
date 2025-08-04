@@ -23,17 +23,13 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# --- ÖNEMLİ: CORS AYARLARI ---
-# Netlify'da çalışacak olan frontend'den gelen isteklere izin ver
-origins = [
-    "http://localhost:5173",  # Yerel geliştirme için
-    "http://localhost:3000",
-    "https://intelliguide.netlify.app"  # <-- SİZİN CANLI SİTENİZİN ADRESİ
-]
-
+# --- ÖNEMLİ: CORS AYARLARI (DEBUGGING İÇİN GÜNCELLENDİ) ---
+# Hatanın devam etmesi üzerine, sorunun sadece CORS kaynaklı olup olmadığını
+# anlamak için geçici olarak tüm kaynaklara izin veriyoruz.
+# Bu, canlıya alındıktan sonra tekrar güvenli hale getirilmelidir.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, # <-- GÜVENLİ LİSTEYİ KULLANMASINI SAĞLIYORUZ
+    allow_origins=["*"], # <-- TÜM KAYNAKLARA İZİN VER
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
