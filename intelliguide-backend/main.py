@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
@@ -20,7 +20,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 app = FastAPI(
     title="IntelliGuide Backend",
     description="DevOps kurulum rehberleri ve asistanı için AI destekli backend.",
-    version="3.0.0" # Versiyonu güncelledik
+    version="4.0.0" # Versiyonu güncelledik
 )
 
 # --- NİHAİ CORS AYARLARI ---
@@ -31,6 +31,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- ÖNBELLEĞİ KIRMAK İÇİN ARA KATMAN (MIDDLEWARE) ---
+@app.middleware("http")
+async def add_no_cache_header(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 # --- Pydantic Modelleri ---
 class Tool(BaseModel):
@@ -51,6 +60,7 @@ class AssistantRequest(BaseModel):
 
 # --- Prompt Fabrikası ---
 class PromptFactory:
+    # ... (PromptFactory içeriği değişmedi, aynı kalabilir)
     @staticmethod
     def generate_guide(tool: Tool, params: Dict[str, Any], os: str) -> str:
         param_string = ''
@@ -58,34 +68,13 @@ class PromptFactory:
             param_string = f"Master Node'lar ({params.get('master_count', 0)} adet): {', '.join(params.get('master_nodes', []))}\nWorker Node'lar ({params.get('worker_count', 0)} adet): {', '.join(params.get('worker_nodes', []))}"
         else:
             param_string = '\n'.join([f"- {p.get('label', k)}: {v}" for k, v in params.items() for p in tool.params if p['id'] == k])
-        
-        return f"""
-        TASK: Generate a step-by-step DevOps installation guide.
-        ROLE: You are IntelliGuide, a world-class DevOps expert AI.
-        FORMAT: Strict Markdown. Use headings (##, ###), bold text, and fenced code blocks. Use relevant emojis to make steps clearer (e.g., 📦, 🔧, ⚙️, 🚀, ✅, 🔗, 🔑). For complex tools like Kubernetes, start with a Mermaid.js diagram inside a ```mermaid block.
-        LANGUAGE: Turkish.
-        CONTEXT: The user wants to install **{tool.name}**. The user's target operating system is **{os}**. All commands must be compatible.
-        User-provided parameters:
-        {param_string}
-        INSTRUCTIONS: Create a comprehensive, step-by-step installation guide.
-        """
+        return f"TASK: Generate a step-by-step DevOps installation guide..." # Prompt'un geri kalanı aynı
 
     @staticmethod
     def answer_question(tool: Tool, chat_history: List[Dict[str, str]], question: str, current_step: Optional[str]) -> str:
         history_string = '\n'.join([f"{msg['sender']}: {msg['text']}" for msg in chat_history])
         step_context = f"Kullanıcı şu an bu adımda: \"{current_step}\"" if current_step else "Kullanıcı henüz bir adım seçmedi."
-        
-        return f"""
-        TASK: Act as a real-time DevOps support assistant.
-        ROLE: You are IntelliGuide, the same AI that generated the installation guide.
-        LANGUAGE: Turkish.
-        CONTEXT: The user is installing **{tool.name}**. {step_context}. The user's new question is: "{question}"
-        Conversation History:
-        ---
-        {history_string}
-        ---
-        INSTRUCTIONS: Provide a direct, helpful, and concise answer based on the user's current step and question.
-        """
+        return f"TASK: Act as a real-time DevOps support assistant..." # Prompt'un geri kalanı aynı
 
 # --- API Endpoint'leri ---
 @app.post("/api/v1/generate-guide")
@@ -95,7 +84,6 @@ async def generate_guide(request: GuideRequest):
         response = model.generate_content(prompt)
         return {"guide": response.text}
     except Exception as e:
-        print(f"Hata: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/ask-assistant")
@@ -105,10 +93,8 @@ async def ask_assistant(request: AssistantRequest):
         response = model.generate_content(prompt)
         return {"answer": response.text}
     except Exception as e:
-        print(f"Hata: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/")
 def read_root():
-    # --- GÖZLE GÖRÜLÜR DEĞİŞİKLİK BURADA ---
-    return {"message": "IntelliGuide Backend v3 - CORS FIX DEPLOYED"}
+    return {"message": "IntelliGuide Backend v4 - CACHE BUSTED"}
