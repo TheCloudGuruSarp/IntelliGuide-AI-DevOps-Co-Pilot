@@ -23,18 +23,17 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# CORS (Cross-Origin Resource Sharing) Ayarları
+# --- ÖNEMLİ: CORS AYARLARI ---
 # Netlify'da çalışacak olan frontend'den gelen isteklere izin ver
 origins = [
     "http://localhost:5173",  # Yerel geliştirme için
-    "http://localhost:3000", # Create-React-App için
-    # Buraya Netlify'dan aldığın canlı URL'yi ekleyeceksin
-    # "https://xxxx-intelliguide.netlify.app"
+    "http://localhost:3000",
+    "https://intelliguide.netlify.app"  # <-- SİZİN CANLI SİTENİZİN ADRESİ
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Geliştirme kolaylığı için şimdilik hepsi, canlıda origins listesini kullan
+    allow_origins=origins, # <-- GÜVENLİ LİSTEYİ KULLANMASINI SAĞLIYORUZ
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
