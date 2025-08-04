@@ -60,8 +60,15 @@ class PromptFactory:
         if tool.id in ['kubernetes', 'rancher-rke2']:
             param_string = f"Master Node'lar ({params.get('master_count', 0)} adet): {', '.join(params.get('master_nodes', []))}\nWorker Node'lar ({params.get('worker_count', 0)} adet): {', '.join(params.get('worker_nodes', []))}"
         else:
-            param_string = '\n'.join([f"- {p.get('label', k)}: {v}" for k, v in params.items() for p in tool.params if p['id'] == k])
-        
+            # Handle checkbox values correctly
+            param_list = []
+            for k, v in params.items():
+                param_info = next((p for p in tool.params if p['id'] == k), None)
+                label = param_info.get('label', k) if param_info else k
+                value_str = ', '.join(v) if isinstance(v, list) else v
+                param_list.append(f"- {label}: {value_str}")
+            param_string = '\n'.join(param_list)
+
         return f"""
         TASK: Generate a step-by-step DevOps installation guide with structured, parseable blocks.
         ROLE: You are IntelliGuide, a world-class DevOps expert AI. Your output must be clean, professional, and easy to parse.
