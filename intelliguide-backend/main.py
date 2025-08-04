@@ -23,13 +23,12 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# --- ÖNEMLİ: CORS AYARLARI (DEBUGGING İÇİN GÜNCELLENDİ) ---
-# Hatanın devam etmesi üzerine, sorunun sadece CORS kaynaklı olup olmadığını
-# anlamak için geçici olarak tüm kaynaklara izin veriyoruz.
-# Bu, canlıya alındıktan sonra tekrar güvenli hale getirilmelidir.
+# --- NİHAİ CORS AYARLARI ---
+# Bu ayar, tüm kaynaklardan gelen tüm isteklere izin verir.
+# Bu, iletişim sorununu kesin olarak çözmelidir.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # <-- TÜM KAYNAKLARA İZİN VER
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
